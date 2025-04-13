@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import RootNavigation from './src/lib/RootNavigation';
+import { AuthProvider } from './src/lib/AuthContext';
 
 // Error boundary component
 class ErrorBoundary extends React.Component<
@@ -20,7 +21,14 @@ class ErrorBoundary extends React.Component<
   render() {
     if (this.state.hasError) {
       return (
-        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <View 
+          style={{ 
+            flex: 1, 
+            justifyContent: 'center', 
+            alignItems: 'center',
+            pointerEvents: 'auto'
+          }}
+        >
           <Text>Something went wrong.</Text>
         </View>
       );
@@ -34,9 +42,11 @@ class ErrorBoundary extends React.Component<
 function App() {
   return (
     <ErrorBoundary>
-      <SafeAreaProvider>
-        <RootNavigation />
-      </SafeAreaProvider>
+      <AuthProvider>
+        <SafeAreaProvider>
+          <RootNavigation />
+        </SafeAreaProvider>
+      </AuthProvider>
     </ErrorBoundary>
   );
 }

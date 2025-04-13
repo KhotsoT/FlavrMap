@@ -3,7 +3,9 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { View, Text } from 'react-native';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import OnboardingScreen from '../screens/OnboardingScreen';
+import { SignInScreen, SignUpScreen, ForgotPasswordScreen } from '../screens/auth';
 import type { RootStackParamList, AuthStackParamList, MainTabParamList } from './navigation.types';
 
 // Create navigators
@@ -18,10 +20,6 @@ const PlaceholderScreen = ({ name }: { name: string }) => (
     <Text>Coming Soon!</Text>
   </View>
 );
-
-// Auth Screens
-const SignInScreen = () => <PlaceholderScreen name="Sign In" />;
-const SignUpScreen = () => <PlaceholderScreen name="Sign Up" />;
 
 // Main Tab Screens
 const HomeScreen = () => <PlaceholderScreen name="Home" />;
@@ -43,6 +41,11 @@ const AuthNavigator = () => {
         component={SignUpScreen}
         options={{ title: 'Sign Up' }}
       />
+      <AuthStack.Screen 
+        name="ForgotPassword" 
+        component={ForgotPasswordScreen}
+        options={{ title: 'Reset Password' }}
+      />
     </AuthStack.Navigator>
   );
 };
@@ -50,11 +53,73 @@ const AuthNavigator = () => {
 // Main Tab Navigator
 const MainNavigator = () => {
   return (
-    <MainTab.Navigator screenOptions={{ headerShown: true }}>
-      <MainTab.Screen name="Home" component={HomeScreen} />
-      <MainTab.Screen name="Recipes" component={RecipesScreen} />
-      <MainTab.Screen name="GroceryCart" component={GroceryCartScreen} />
-      <MainTab.Screen name="StoreFinder" component={StoreFinderScreen} />
+    <MainTab.Navigator 
+      screenOptions={({ route }) => ({
+        headerShown: true,
+        tabBarIcon: ({ focused, color, size }) => {
+          let iconName;
+
+          switch (route.name) {
+            case 'Home':
+              iconName = focused ? 'home' : 'home-outline';
+              break;
+            case 'Recipes':
+              iconName = focused ? 'book-open' : 'book-open-outline';
+              break;
+            case 'GroceryCart':
+              iconName = focused ? 'cart' : 'cart-outline';
+              break;
+            case 'StoreFinder':
+              iconName = focused ? 'store' : 'store-outline';
+              break;
+            default:
+              iconName = 'help';
+          }
+
+          return (
+            <MaterialCommunityIcons
+              name={iconName as keyof typeof MaterialCommunityIcons.glyphMap}
+              size={size}
+              color={color}
+            />
+          );
+        },
+        tabBarActiveTintColor: '#3b82f6',
+        tabBarInactiveTintColor: 'gray',
+        tabBarLabelStyle: {
+          fontSize: 12,
+          fontWeight: '500',
+        },
+      })}
+    >
+      <MainTab.Screen 
+        name="Home" 
+        component={HomeScreen}
+        options={{
+          title: 'Home'
+        }}
+      />
+      <MainTab.Screen 
+        name="Recipes" 
+        component={RecipesScreen}
+        options={{
+          title: 'Recipes'
+        }}
+      />
+      <MainTab.Screen 
+        name="GroceryCart" 
+        component={GroceryCartScreen}
+        options={{
+          title: 'Grocery Cart'
+        }}
+      />
+      <MainTab.Screen 
+        name="StoreFinder" 
+        component={StoreFinderScreen}
+        options={{
+          title: 'Store Finder'
+        }}
+      />
     </MainTab.Navigator>
   );
 };
