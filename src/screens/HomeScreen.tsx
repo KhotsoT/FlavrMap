@@ -44,7 +44,8 @@ const HomeScreen = () => {
 
         <MealPlanner />
 
-        {/* Quick Actions */}
+        {/* Quick Actions - Temporarily disabled */}
+        {/*
         <View style={styles.quickActions}>
           <TouchableOpacity style={styles.actionButton}>
             <View style={styles.actionIconContainer}>
@@ -65,6 +66,7 @@ const HomeScreen = () => {
             <Text style={styles.actionText}>Find Store</Text>
           </TouchableOpacity>
         </View>
+        */}
 
         {/* Recent Recipes */}
         <View style={styles.section}>
@@ -147,10 +149,7 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     marginBottom: 24,
     elevation: 2,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
+    boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)',
   },
   actionButton: {
     alignItems: 'center',
@@ -228,10 +227,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 6,
     alignItems: 'center',
     elevation: 2,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
+    boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)',
   },
   statNumber: {
     fontSize: 24,

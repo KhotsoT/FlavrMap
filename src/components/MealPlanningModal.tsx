@@ -22,13 +22,21 @@ export interface MealOption {
   id: string;
   name: string;
   price: number;
-  category: 'breakfast' | 'lunch' | 'dinner';
+  category: string;
   description: string;
   prepTime: string;
   isTraditional?: boolean;
-  nutritionalValue: string;
-  cuisine?: string;
-  ingredients?: string[];
+  cuisine: string;
+  servings: number;
+  ingredients: string[];
+  method: string[];
+  tips?: string[];
+  nutritionalValue: {
+    calories: number;
+    protein: number;
+    carbs: number;
+    fat: number;
+  };
 }
 
 export interface MealPlanningModalProps {
@@ -51,53 +59,223 @@ const MEAL_OPTIONS: MealOption[] = [
     description: 'Traditional maize porridge served with spicy vegetable relish',
     prepTime: '20 mins',
     isTraditional: true,
-    nutritionalValue: 'High in carbs, fiber, vitamins',
-    cuisine: 'South African'
+    cuisine: 'South African',
+    servings: 2,
+    ingredients: [
+      '1 cup maize meal',
+      '2 cups water',
+      '1 tsp salt',
+      '1 onion, chopped',
+      '1 green pepper, chopped',
+      '1 carrot, grated',
+      '1 can baked beans',
+      '2 tbsp curry powder',
+      '1 tsp paprika',
+      '2 tbsp oil'
+    ],
+    method: [
+      'For the Mieliepap:',
+      '1. Bring water to boil in a pot',
+      '2. Add salt and gradually stir in maize meal',
+      '3. Reduce heat and simmer for 15 minutes, stirring occasionally',
+      '4. Cover and let stand for 5 minutes',
+      '',
+      'For the Chakalaka:',
+      '1. Heat oil in a pan and sauté onions until translucent',
+      '2. Add green pepper and cook for 2 minutes',
+      '3. Stir in grated carrot and cook for another 2 minutes',
+      '4. Add curry powder and paprika, mix well',
+      '5. Add baked beans and simmer for 5 minutes',
+      '6. Season to taste',
+      '',
+      'Serve the mieliepap hot with chakalaka on top'
+    ],
+    tips: [
+      'For creamier pap, use milk instead of water',
+      'Add a knob of butter to the pap for extra richness',
+      'Adjust spice levels in chakalaka to your preference',
+      'Can be served with boerewors for a complete meal'
+    ],
+    nutritionalValue: {
+      calories: 200,
+      protein: 5,
+      carbs: 40,
+      fat: 1,
+    }
   },
   {
     id: 'b2',
-    name: 'Vetkoek & Mince',
+    name: 'Full English Breakfast',
     price: 45.00,
     category: 'breakfast',
-    description: 'Deep-fried bread filled with seasoned minced meat',
+    description: 'Classic British breakfast with eggs, bacon, sausage, and more',
     prepTime: '25 mins',
-    isTraditional: true,
-    nutritionalValue: 'High in protein, carbs',
-    cuisine: 'South African'
+    cuisine: 'British',
+    servings: 2,
+    ingredients: [
+      '4 eggs',
+      '4 rashers bacon',
+      '4 pork sausages',
+      '2 tomatoes, halved',
+      '4 mushrooms',
+      '1 can baked beans',
+      '4 slices toast',
+      'Butter for frying',
+      'Salt and pepper'
+    ],
+    method: [
+      '1. Heat a large frying pan and cook bacon until crispy',
+      '2. In the same pan, cook sausages until browned',
+      '3. Add tomatoes and mushrooms to the pan',
+      '4. In a separate pan, heat baked beans',
+      '5. Fry eggs to your preference',
+      '6. Toast bread and butter',
+      '7. Arrange all components on plates',
+      '8. Season with salt and pepper'
+    ],
+    tips: [
+      'Cook components in order of cooking time',
+      'Keep cooked items warm in a low oven',
+      'Use good quality sausages and bacon',
+      'Serve with HP sauce or ketchup'
+    ],
+    nutritionalValue: {
+      calories: 800,
+      protein: 35,
+      carbs: 45,
+      fat: 50,
+    }
   },
   {
     id: 'b3',
-    name: 'Fruit and Yogurt Bowl',
+    name: 'Chilaquiles',
     price: 40.00,
     category: 'breakfast',
-    description: 'Fresh seasonal fruits with local yogurt',
-    prepTime: '15 mins',
-    nutritionalValue: 'Rich in vitamins, probiotics',
-    cuisine: 'International'
+    description: 'Traditional Mexican breakfast with tortilla chips and salsa',
+    prepTime: '20 mins',
+    cuisine: 'Mexican',
+    servings: 2,
+    ingredients: [
+      '4 corn tortillas, cut into triangles',
+      '2 cups salsa verde',
+      '2 eggs',
+      '1/2 cup queso fresco',
+      '1/4 cup crema',
+      '1/4 cup chopped cilantro',
+      '1/2 onion, sliced',
+      'Oil for frying',
+      'Salt to taste'
+    ],
+    method: [
+      '1. Fry tortilla triangles until crispy',
+      '2. Heat salsa verde in a pan',
+      '3. Add fried tortillas to the salsa',
+      '4. Fry eggs sunny-side up',
+      '5. Top chilaquiles with eggs',
+      '6. Garnish with queso fresco, crema, cilantro, and onions',
+      '7. Season with salt'
+    ],
+    tips: [
+      'Use homemade salsa for best flavor',
+      'Don\'t let tortillas get too soggy',
+      'Add avocado for extra creaminess',
+      'Serve with refried beans'
+    ],
+    nutritionalValue: {
+      calories: 450,
+      protein: 15,
+      carbs: 40,
+      fat: 25,
+    }
   },
 
   // Lunch Options
   {
     id: 'l1',
-    name: 'Bobotie',
+    name: 'Pad Thai',
     price: 65.00,
     category: 'lunch',
-    description: 'Spiced minced meat bake with egg custard topping',
-    prepTime: '35 mins',
-    isTraditional: true,
-    nutritionalValue: 'High in protein, moderate carbs',
-    cuisine: 'South African'
+    description: 'Classic Thai stir-fried noodles with tamarind sauce',
+    prepTime: '30 mins',
+    cuisine: 'Thai',
+    servings: 2,
+    ingredients: [
+      '200g rice noodles',
+      '2 eggs',
+      '100g tofu, cubed',
+      '2 tbsp tamarind paste',
+      '2 tbsp fish sauce',
+      '1 tbsp sugar',
+      '2 cloves garlic, minced',
+      '1 shallot, sliced',
+      '100g bean sprouts',
+      '2 spring onions, chopped',
+      '2 tbsp peanuts, crushed',
+      'Lime wedges',
+      'Oil for frying'
+    ],
+    method: [
+      '1. Soak rice noodles in warm water for 15 minutes',
+      '2. Mix tamarind paste, fish sauce, and sugar',
+      '3. Heat oil and scramble eggs, set aside',
+      '4. Stir-fry garlic and shallot until fragrant',
+      '5. Add tofu and cook until golden',
+      '6. Add noodles and sauce, toss well',
+      '7. Add bean sprouts and spring onions',
+      '8. Top with crushed peanuts and lime wedges'
+    ],
+    tips: [
+      'Use fresh rice noodles if available',
+      'Adjust sauce ingredients to taste',
+      'Add chili flakes for heat',
+      'Serve immediately for best texture'
+    ],
+    nutritionalValue: {
+      calories: 550,
+      protein: 20,
+      carbs: 70,
+      fat: 15,
+    }
   },
   {
     id: 'l2',
-    name: 'Boerewors Roll',
-    price: 40.00,
+    name: 'Margherita Pizza',
+    price: 60.00,
     category: 'lunch',
-    description: 'Traditional South African sausage in a fresh roll',
-    prepTime: '15 mins',
-    isTraditional: true,
-    nutritionalValue: 'High in protein',
-    cuisine: 'South African'
+    description: 'Classic Italian pizza with tomato and mozzarella',
+    prepTime: '45 mins',
+    cuisine: 'Italian',
+    servings: 2,
+    ingredients: [
+      '250g pizza dough',
+      '1/2 cup tomato sauce',
+      '200g fresh mozzarella',
+      'Fresh basil leaves',
+      '2 tbsp olive oil',
+      'Salt and pepper'
+    ],
+    method: [
+      '1. Preheat oven to highest temperature',
+      '2. Roll out pizza dough',
+      '3. Spread tomato sauce evenly',
+      '4. Tear mozzarella and distribute',
+      '5. Drizzle with olive oil',
+      '6. Bake for 10-12 minutes',
+      '7. Top with fresh basil',
+      '8. Season with salt and pepper'
+    ],
+    tips: [
+      'Use a pizza stone for best results',
+      'Let dough rest before rolling',
+      'Use fresh, high-quality ingredients',
+      'Don\'t overload with toppings'
+    ],
+    nutritionalValue: {
+      calories: 600,
+      protein: 25,
+      carbs: 80,
+      fat: 20,
+    }
   },
   {
     id: 'l3',
@@ -107,32 +285,115 @@ const MEAL_OPTIONS: MealOption[] = [
     description: 'Maize meal porridge with grilled boerewors',
     prepTime: '20 mins',
     isTraditional: true,
-    nutritionalValue: 'High in protein, carbs',
-    cuisine: 'South African'
+    cuisine: 'South African',
+    servings: 2,
+    ingredients: ['maize', 'boerewors'],
+    method: ['cook'],
+    nutritionalValue: {
+      calories: 200,
+      protein: 5,
+      carbs: 40,
+      fat: 1,
+    }
   },
 
   // Dinner Options
   {
     id: 'd1',
-    name: 'Potjiekos',
+    name: 'Butter Chicken',
     price: 85.00,
     category: 'dinner',
-    description: 'Slow-cooked meat and vegetable stew',
-    prepTime: '180 mins',
-    isTraditional: true,
-    nutritionalValue: 'Balanced protein, vegetables',
-    cuisine: 'South African'
+    description: 'Creamy Indian curry with tender chicken',
+    prepTime: '40 mins',
+    cuisine: 'Indian',
+    servings: 4,
+    ingredients: [
+      '500g chicken thighs',
+      '1 cup yogurt',
+      '2 tbsp lemon juice',
+      '2 tbsp garam masala',
+      '1 tbsp turmeric',
+      '2 tbsp butter',
+      '1 onion, chopped',
+      '3 cloves garlic, minced',
+      '1 tbsp ginger, grated',
+      '1 can tomato puree',
+      '1 cup cream',
+      'Fresh cilantro',
+      'Salt to taste'
+    ],
+    method: [
+      '1. Marinate chicken in yogurt, lemon juice, and spices',
+      '2. Heat butter and cook onions until golden',
+      '3. Add garlic and ginger, cook until fragrant',
+      '4. Add tomato puree and cook for 5 minutes',
+      '5. Add marinated chicken and cook until done',
+      '6. Stir in cream and simmer for 5 minutes',
+      '7. Garnish with fresh cilantro',
+      '8. Serve with naan or rice'
+    ],
+    tips: [
+      'Marinate chicken overnight for best flavor',
+      'Use full-fat cream for richness',
+      'Adjust spice levels to taste',
+      'Let curry rest before serving'
+    ],
+    nutritionalValue: {
+      calories: 450,
+      protein: 30,
+      carbs: 15,
+      fat: 30,
+    }
   },
   {
     id: 'd2',
-    name: 'Braai Platter',
-    price: 120.00,
+    name: 'Beef Bourguignon',
+    price: 95.00,
     category: 'dinner',
-    description: 'Grilled meats with pap and chakalaka',
-    prepTime: '25 mins',
-    isTraditional: true,
-    nutritionalValue: 'High in protein, balanced sides',
-    cuisine: 'South African'
+    description: 'Classic French beef stew with red wine',
+    prepTime: '180 mins',
+    cuisine: 'French',
+    servings: 4,
+    ingredients: [
+      '1kg beef chuck, cubed',
+      '200g bacon, diced',
+      '2 onions, chopped',
+      '3 carrots, sliced',
+      '2 cloves garlic, minced',
+      '2 cups red wine',
+      '2 cups beef stock',
+      '1 tbsp tomato paste',
+      '1 bouquet garni',
+      '250g mushrooms, quartered',
+      '20 pearl onions',
+      '2 tbsp flour',
+      'Butter and oil for cooking',
+      'Salt and pepper'
+    ],
+    method: [
+      '1. Brown beef in batches, set aside',
+      '2. Cook bacon until crispy',
+      '3. Sauté onions and carrots',
+      '4. Add garlic and flour, cook for 1 minute',
+      '5. Deglaze with wine, add stock and tomato paste',
+      '6. Return beef and add bouquet garni',
+      '7. Simmer for 2 hours',
+      '8. Add mushrooms and pearl onions',
+      '9. Cook for 30 more minutes',
+      '10. Season to taste'
+    ],
+    tips: [
+      'Use good quality red wine',
+      'Cook low and slow for tender meat',
+      'Skim fat from surface while cooking',
+      'Serve with mashed potatoes'
+    ],
+    nutritionalValue: {
+      calories: 550,
+      protein: 40,
+      carbs: 20,
+      fat: 35,
+    }
   },
   {
     id: 'd3',
@@ -142,8 +403,16 @@ const MEAL_OPTIONS: MealOption[] = [
     description: 'Samp and beans with vegetables',
     prepTime: '20 mins',
     isTraditional: true,
-    nutritionalValue: 'High in protein, fiber',
-    cuisine: 'South African'
+    cuisine: 'South African',
+    servings: 4,
+    ingredients: ['samp', 'beans', 'vegetables'],
+    method: ['cook'],
+    nutritionalValue: {
+      calories: 300,
+      protein: 10,
+      carbs: 50,
+      fat: 1,
+    }
   },
 ];
 
@@ -315,9 +584,17 @@ const MealPlanningModal: React.FC<MealPlanningModalProps> = ({
           description: `Traditional recipe for ${query}`,
           isTraditional: false,
           category: mealType,
-          nutritionalValue: 'Balanced meal',
           cuisine: 'International',
-          prepTime: '30 mins'
+          prepTime: '30 mins',
+          servings: 2,
+          ingredients: ['meat', 'vegetables'],
+          method: ['cook'],
+          nutritionalValue: {
+            calories: 600,
+            protein: 20,
+            carbs: 50,
+            fat: 30,
+          }
         },
         {
           id: 'custom2',
@@ -326,9 +603,17 @@ const MealPlanningModal: React.FC<MealPlanningModalProps> = ({
           description: `Meat-free version of ${query}`,
           isTraditional: false,
           category: mealType,
-          nutritionalValue: 'Plant-based protein',
           cuisine: 'International',
-          prepTime: '25 mins'
+          prepTime: '25 mins',
+          servings: 2,
+          ingredients: ['vegetables'],
+          method: ['cook'],
+          nutritionalValue: {
+            calories: 300,
+            protein: 5,
+            carbs: 40,
+            fat: 1,
+          }
         },
         {
           id: 'custom3',
@@ -337,9 +622,17 @@ const MealPlanningModal: React.FC<MealPlanningModalProps> = ({
           description: `Hot and spicy version of ${query}`,
           isTraditional: false,
           category: mealType,
-          nutritionalValue: 'Balanced meal',
           cuisine: 'Fusion',
-          prepTime: '35 mins'
+          prepTime: '35 mins',
+          servings: 2,
+          ingredients: ['meat', 'vegetables'],
+          method: ['grill'],
+          nutritionalValue: {
+            calories: 800,
+            protein: 25,
+            carbs: 60,
+            fat: 40,
+          }
         },
         {
           id: 'custom4',
@@ -348,9 +641,17 @@ const MealPlanningModal: React.FC<MealPlanningModalProps> = ({
           description: `Healthy, low-carb version of ${query}`,
           isTraditional: false,
           category: mealType,
-          nutritionalValue: 'High protein, low carb',
           cuisine: 'Health',
-          prepTime: '30 mins'
+          prepTime: '30 mins',
+          servings: 2,
+          ingredients: ['meat', 'vegetables'],
+          method: ['cook'],
+          nutritionalValue: {
+            calories: 500,
+            protein: 15,
+            carbs: 40,
+            fat: 20,
+          }
         },
         {
           id: 'custom5',
@@ -359,9 +660,17 @@ const MealPlanningModal: React.FC<MealPlanningModalProps> = ({
           description: `Premium version of ${query} with special ingredients`,
           isTraditional: false,
           category: mealType,
-          nutritionalValue: 'Gourmet balanced meal',
           cuisine: 'Fusion',
-          prepTime: '45 mins'
+          prepTime: '45 mins',
+          servings: 2,
+          ingredients: ['meat', 'vegetables'],
+          method: ['grill'],
+          nutritionalValue: {
+            calories: 1000,
+            protein: 30,
+            carbs: 70,
+            fat: 50,
+          }
         },
       ];
 
@@ -514,7 +823,7 @@ const MealPlanningModal: React.FC<MealPlanningModalProps> = ({
                         <MaterialIcons name="schedule" size={16} color="#64748B" />
                         <Text style={styles.timingText}>{meal.prepTime}</Text>
                       </View>
-                      <Text style={styles.nutritionalValue}>{meal.nutritionalValue}</Text>
+                      <Text style={styles.nutritionalValue}>{meal.nutritionalValue.calories} calories</Text>
                     </View>
                   </TouchableOpacity>
                 ))}
@@ -548,7 +857,7 @@ const MealPlanningModal: React.FC<MealPlanningModalProps> = ({
                         <MaterialIcons name="schedule" size={16} color="#64748B" />
                         <Text style={styles.timingText}>{meal.prepTime}</Text>
                       </View>
-                      <Text style={styles.nutritionalValue}>{meal.nutritionalValue}</Text>
+                      <Text style={styles.nutritionalValue}>{meal.nutritionalValue.calories} calories</Text>
                     </View>
                   </TouchableOpacity>
                 ))}
@@ -569,9 +878,22 @@ const styles = StyleSheet.create({
   },
   modalContent: {
     backgroundColor: '#FFFFFF',
-    borderTopLeftRadius: 24,
-    borderTopRightRadius: 24,
-    maxHeight: '90%',
+    borderRadius: 16,
+    padding: 16,
+    ...Platform.select({
+      ios: {
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
+      },
+      android: {
+        elevation: 4,
+      },
+      web: {
+        boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)',
+      },
+    }),
   },
   header: {
     flexDirection: 'row',
@@ -693,11 +1015,20 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     borderWidth: 1,
     borderColor: '#E2E8F0',
-    elevation: 2,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
+    ...Platform.select({
+      ios: {
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
+      },
+      android: {
+        elevation: 4,
+      },
+      web: {
+        boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)',
+      },
+    }),
   },
   mealHeader: {
     flexDirection: 'row',

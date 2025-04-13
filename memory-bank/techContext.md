@@ -1,104 +1,257 @@
-# FlavrMap Technical Context
+# Technical Context
 
-## Development Environment
-- **OS**: Windows 10
-- **Node.js**: Latest LTS version
-- **Package Manager**: npm
-- **IDE**: Cursor
+## Technology Stack
 
-## Core Technologies
 ### Frontend
-- **Expo**: 52.0.43
-- **React Native**: 0.76.9
-- **React**: 18.3.1
-- **TypeScript**: 5.3.3
-- **NativeWind**: 2.0.11
-- **TailwindCSS**: 3.4.1
+- **Framework**: React Native Web
+- **Language**: TypeScript
+- **State Management**: Zustand
+- **UI Components**: Custom components with Material Design influence
+- **Styling**: React Native StyleSheet
+- **Navigation**: React Navigation
 
-### Navigation
-- **React Navigation**: 6.1.9
-- **React Navigation Native Stack**: 6.9.17
-- **React Navigation Bottom Tabs**: 6.5.11
-- **React Native Screens**: 4.4.0
-- **React Native Safe Area Context**: 4.12.0
-- **React Native Gesture Handler**: 2.20.2
+### Backend Services
+- **Authentication**: Firebase Auth
+- **Database**: Firebase Firestore
+- **Storage**: Firebase Storage
+- **API Integration**: Spoonacular API
+- **Hosting**: Firebase Hosting
 
-### State Management
-- **Zustand**: 4.5.0
+### Development Tools
+- **IDE**: VS Code / Cursor
+- **Package Manager**: npm
+- **Build Tool**: Webpack
+- **Testing**: Jest + React Testing Library
+- **Linting**: ESLint + Prettier
+- **Version Control**: Git
 
-### Backend
-- **Firebase**: 10.8.0
-  - Authentication
-  - Firestore
-  - Storage
+## Development Setup
 
-## Development Tools
-- **Babel**: 7.25.2
-- **PostCSS**: 8.4.35
-- **Autoprefixer**: 10.4.17
-
-## Project Structure
+### Environment Setup
+```bash
+# Required versions
+Node.js: >= 16.0.0
+npm: >= 8.0.0
 ```
-flavrmap/
+
+### Project Structure
+```
+FlavrMap/
 ├── src/
-│   ├── screens/         # Screen components
-│   ├── components/      # Reusable UI components
-│   ├── store/          # Zustand stores
-│   ├── lib/            # Utilities and helpers
-│   └── constants/      # App constants
-├── assets/             # Static assets
-├── memory-bank/        # Project documentation
-└── config/             # Configuration files
+│   ├── components/     # UI components
+│   ├── screens/        # Screen components
+│   ├── navigation/     # Navigation setup
+│   ├── services/       # API and business logic
+│   ├── stores/         # State management
+│   ├── hooks/          # Custom hooks
+│   ├── utils/          # Helper functions
+│   └── types/          # TypeScript definitions
+├── public/            # Static assets
+├── memory-bank/       # Project documentation
+├── tests/             # Test files
+├── .env              # Environment variables
+├── package.json      # Dependencies
+└── webpack.config.js # Build configuration
 ```
 
-## Configuration Files
-1. **package.json**: Dependencies and scripts
-2. **tsconfig.json**: TypeScript configuration
-3. **tailwind.config.js**: TailwindCSS configuration
-4. **postcss.config.js**: PostCSS configuration
-5. **app.json**: Expo configuration
-6. **babel.config.js**: Babel configuration
+### Environment Variables
+```
+# Firebase Configuration
+FIREBASE_API_KEY=
+FIREBASE_AUTH_DOMAIN=
+FIREBASE_PROJECT_ID=
+FIREBASE_STORAGE_BUCKET=
+FIREBASE_MESSAGING_SENDER_ID=
+FIREBASE_APP_ID=
+
+# Spoonacular API
+SPOONACULAR_API_KEY=
+```
+
+## Technical Constraints
+
+### Performance Requirements
+- Initial load time < 3s
+- Time to interactive < 5s
+- 60 FPS animations
+- Offline capability for core features
+
+### Browser Support
+- Chrome (latest 2 versions)
+- Firefox (latest 2 versions)
+- Safari (latest 2 versions)
+- Edge (latest 2 versions)
+
+### Mobile Support
+- iOS 13+
+- Android 9+
+- PWA support
+
+### API Rate Limits
+- Spoonacular: 150 requests/day (free tier)
+- Firebase: Spark plan limits
 
 ## Development Workflow
-1. **Setup**
-   ```bash
-   npm install
-   expo start
-   ```
 
-2. **Development**
-   - Run on iOS: `expo start --ios`
-   - Run on Android: `expo start --android`
-   - Web support: Currently not available in Expo 52 (requires downgrade to Expo 48 for web support)
+### Local Development
+1. Clone repository
+2. Install dependencies
+3. Set up environment variables
+4. Start development server
 
-3. **Testing**
-   - Unit tests: `npm test`
-   - E2E tests: `npm run e2e`
+```bash
+git clone <repository-url>
+cd FlavrMap
+npm install
+cp .env.example .env  # Configure environment variables
+npm start
+```
 
-4. **Building**
-   - iOS: `expo build:ios`
-   - Android: `expo build:android`
-   - Web: Not supported in current version
+### Testing
+```bash
+# Run unit tests
+npm test
 
-## Known Limitations
-1. **Web Platform Support**
-   - Expo 52 does not yet have stable web support
-   - Web development requires downgrading to Expo 48
-   - Current focus is on mobile platforms (iOS/Android)
+# Run with coverage
+npm test -- --coverage
+
+# Run e2e tests
+npm run test:e2e
+```
+
+### Building
+```bash
+# Development build
+npm run build:dev
+
+# Production build
+npm run build:prod
+```
+
+### Deployment
+```bash
+# Deploy to Firebase
+npm run deploy
+```
+
+## Code Quality
+
+### Linting Rules
+- ESLint with TypeScript support
+- Prettier for code formatting
+- Husky for pre-commit hooks
+
+### Testing Requirements
+- Unit test coverage > 80%
+- E2E tests for critical paths
+- Snapshot testing for UI components
+
+### Documentation Standards
+- JSDoc comments for functions
+- README files for components
+- API documentation
+- Changelog maintenance
+
+## Security Measures
+
+### Authentication
+- Firebase Authentication
+- JWT token management
+- Session handling
+- Secure route protection
+
+### Data Protection
+- Input sanitization
+- XSS prevention
+- CSRF protection
+- Secure storage handling
+
+## Monitoring & Analytics
+
+### Performance Monitoring
+- Firebase Performance Monitoring
+- Web Vitals tracking
+- Error tracking
+- User behavior analytics
+
+### Error Tracking
+- Firebase Crashlytics
+- Error boundary logging
+- API error tracking
+- Performance bottlenecks
 
 ## Dependencies
-### Production
-- expo
-- react-native
-- react-navigation
-- firebase
-- zustand
-- nativewind
-- react-native-gesture-handler
 
-### Development
-- typescript
-- @types/react
-- @babel/core
-- postcss
-- autoprefixer 
+### Core Dependencies
+```json
+{
+  "react": "^18.0.0",
+  "react-native-web": "^0.19.0",
+  "react-navigation": "^6.0.0",
+  "zustand": "^4.0.0",
+  "firebase": "^9.0.0",
+  "axios": "^1.0.0"
+}
+```
+
+### Development Dependencies
+```json
+{
+  "typescript": "^4.9.0",
+  "webpack": "^5.0.0",
+  "jest": "^29.0.0",
+  "eslint": "^8.0.0",
+  "prettier": "^2.0.0"
+}
+```
+
+## API Integration
+
+### Spoonacular API
+- Recipe search
+- Recipe details
+- Ingredient information
+- Meal planning
+- Rate limiting handling
+
+### Firebase Services
+- User authentication
+- Data storage
+- File storage
+- Real-time updates
+- Offline persistence
+
+## Optimization Strategies
+
+### Performance
+- Code splitting
+- Lazy loading
+- Image optimization
+- Caching strategies
+- Bundle size optimization
+
+### Mobile Optimization
+- Touch event handling
+- Responsive design
+- Device-specific features
+- Offline support
+
+## Future Considerations
+
+### Scalability
+- Microservices architecture
+- Serverless functions
+- CDN integration
+- Database sharding
+
+### Feature Expansion
+- Social features
+- Advanced search
+- Machine learning
+- Personalization
+
+### Technical Debt
+- Regular dependency updates
+- Code refactoring
+- Performance optimization
+- Security audits

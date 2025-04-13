@@ -46,7 +46,7 @@ const StepIndicator: React.FC<StepIndicatorProps> = ({ step, title, completed })
       {completed ? (
         <MaterialIcons name="check" size={16} color="#fff" />
       ) : (
-        <Text style={styles.stepNumber}>{step}</Text>
+        <Text style={styles.stepCircleNumber}>{step}</Text>
       )}
     </View>
     <Text style={styles.stepTitle}>{title}</Text>
@@ -199,6 +199,126 @@ const MealPlanner: React.FC = () => {
   const hasBudget = getCurrentBudget() > 0;
   const hasMealSelected = getSelectedMealForTypeAndDay(currentMeal, selectedDay) !== undefined;
 
+  const getCuisineIcon = (cuisine: string): keyof typeof MaterialCommunityIcons.glyphMap => {
+    switch (cuisine.toLowerCase()) {
+      case 'african':
+        return 'food-variant' as keyof typeof MaterialCommunityIcons.glyphMap;
+      case 'american':
+        return 'food-hot-dog' as keyof typeof MaterialCommunityIcons.glyphMap;
+      case 'asian':
+        return 'food-taco' as keyof typeof MaterialCommunityIcons.glyphMap;
+      case 'european':
+        return 'food-croissant' as keyof typeof MaterialCommunityIcons.glyphMap;
+      case 'indian':
+        return 'food-curry' as keyof typeof MaterialCommunityIcons.glyphMap;
+      case 'mexican':
+        return 'food-taco' as keyof typeof MaterialCommunityIcons.glyphMap;
+      case 'middle eastern':
+        return 'food-fork-drink' as keyof typeof MaterialCommunityIcons.glyphMap;
+      case 'south american':
+        return 'food-steak' as keyof typeof MaterialCommunityIcons.glyphMap;
+      default:
+        return 'food' as keyof typeof MaterialCommunityIcons.glyphMap;
+    }
+  };
+
+  const renderRecipeDetails = () => {
+    const selectedMeal = getSelectedMealForTypeAndDay(currentMeal, selectedDay);
+    if (!selectedMeal) return null;
+
+    return (
+      <View style={styles.recipeDetailsContainer}>
+        <View style={styles.recipeHeader}>
+          <View style={styles.recipeTitleRow}>
+            <Text style={styles.recipeName}>{selectedMeal.meal.name}</Text>
+            {selectedMeal.meal.isTraditional && (
+              <MaterialIcons name="star" size={16} color="#FFB800" style={styles.traditionalIcon} />
+            )}
+          </View>
+          
+          <View style={styles.recipeMetaInfo}>
+            <View style={styles.cuisineTag}>
+              <MaterialCommunityIcons
+                name={getCuisineIcon(selectedMeal.meal.cuisine)}
+                size={16}
+                color="#64748B"
+              />
+              <Text style={styles.cuisineText}>{selectedMeal.meal.cuisine}</Text>
+            </View>
+            <View style={styles.prepTimeTag}>
+              <MaterialIcons name="schedule" size={16} color="#64748B" />
+              <Text style={styles.prepTimeText}>{selectedMeal.meal.prepTime}</Text>
+            </View>
+            <View style={styles.servingsTag}>
+              <MaterialIcons name="people" size={16} color="#64748B" />
+              <Text style={styles.servingsText}>{selectedMeal.meal.servings} servings</Text>
+            </View>
+          </View>
+        </View>
+
+        <View style={styles.recipeContent}>
+          <Text style={styles.recipeDescription}>{selectedMeal.meal.description}</Text>
+          
+          <View style={styles.nutritionInfo}>
+            <Text style={styles.sectionTitle}>Nutritional Value (per serving)</Text>
+            <View style={styles.nutritionGrid}>
+              <View style={styles.nutritionItem}>
+                <Text style={styles.nutritionLabel}>Calories</Text>
+                <Text style={styles.nutritionValue}>{selectedMeal.meal.nutritionalValue.calories}kcal</Text>
+              </View>
+              <View style={styles.nutritionItem}>
+                <Text style={styles.nutritionLabel}>Protein</Text>
+                <Text style={styles.nutritionValue}>{selectedMeal.meal.nutritionalValue.protein}g</Text>
+              </View>
+              <View style={styles.nutritionItem}>
+                <Text style={styles.nutritionLabel}>Carbs</Text>
+                <Text style={styles.nutritionValue}>{selectedMeal.meal.nutritionalValue.carbs}g</Text>
+              </View>
+              <View style={styles.nutritionItem}>
+                <Text style={styles.nutritionLabel}>Fat</Text>
+                <Text style={styles.nutritionValue}>{selectedMeal.meal.nutritionalValue.fat}g</Text>
+              </View>
+            </View>
+          </View>
+
+          <View style={styles.ingredientsSection}>
+            <Text style={styles.sectionTitle}>Ingredients</Text>
+            {selectedMeal.meal.ingredients?.map((ingredient, index) => (
+              <View key={index} style={styles.ingredientItem}>
+                <MaterialIcons name="check-circle" size={16} color="#10B981" />
+                <Text style={styles.ingredientText}>{ingredient}</Text>
+              </View>
+            ))}
+          </View>
+
+          <View style={styles.methodSection}>
+            <Text style={styles.sectionTitle}>Cooking Method</Text>
+            {selectedMeal.meal.method?.map((step, index) => (
+              <View key={index} style={styles.methodStep}>
+                <View style={styles.stepNumber}>
+                  <Text style={styles.stepNumberText}>{index + 1}</Text>
+                </View>
+                <Text style={styles.methodText}>{step}</Text>
+              </View>
+            ))}
+          </View>
+
+          {selectedMeal.meal.tips && selectedMeal.meal.tips.length > 0 && (
+            <View style={styles.tipsSection}>
+              <Text style={styles.sectionTitle}>Chef's Tips</Text>
+              {selectedMeal.meal.tips.map((tip, index) => (
+                <View key={index} style={styles.tipItem}>
+                  <MaterialIcons name="lightbulb" size={16} color="#F59E0B" />
+                  <Text style={styles.tipText}>{tip}</Text>
+                </View>
+              ))}
+            </View>
+          )}
+        </View>
+      </View>
+    );
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -245,7 +365,7 @@ const MealPlanner: React.FC = () => {
             <Text style={styles.stepText}>Step 2: Select Period</Text>
           </View>
         </View>
-        <View style={styles.periodButtons}>
+        <View style={styles.periodSelector}>
           <TouchableOpacity
             style={[styles.periodButton, planningPeriod === 'today' && styles.periodButtonActive]}
             onPress={() => setPlanningPeriod('today')}
@@ -353,6 +473,14 @@ const MealPlanner: React.FC = () => {
         </View>
       )}
 
+      {/* Recipe Section */}
+      {selectedMeals[planningPeriod].length > 0 && (
+        <View style={styles.recipeSection}>
+          <Text style={styles.recipeSectionTitle}>Recipe Details</Text>
+          {renderRecipeDetails()}
+        </View>
+      )}
+
       <BudgetModal
         visible={budgetModalVisible}
         onClose={() => setBudgetModalVisible(false)}
@@ -375,16 +503,9 @@ const MealPlanner: React.FC = () => {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 16,
-    padding: 16,
-    marginHorizontal: 20,
-    marginBottom: 24,
-    elevation: 2,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
+    flex: 1,
+    backgroundColor: '#fff',
+    paddingHorizontal: 20,
   },
   header: {
     flexDirection: 'row',
@@ -435,25 +556,27 @@ const styles = StyleSheet.create({
     color: '#1F2937',
     fontWeight: '500',
   },
-  periodButtons: {
+  periodSelector: {
     flexDirection: 'row',
-    gap: 8,
+    marginVertical: 16,
+    marginHorizontal: 20,
+    gap: 12,
   },
   periodButton: {
     flex: 1,
+    backgroundColor: '#F1F5F9',
     paddingVertical: 12,
     paddingHorizontal: 16,
-    borderRadius: 8,
-    backgroundColor: '#F3F4F6',
+    borderRadius: 12,
     alignItems: 'center',
   },
   periodButtonActive: {
     backgroundColor: '#3B82F6',
   },
   periodButtonText: {
-    fontSize: 14,
+    fontSize: 16,
     fontWeight: '500',
-    color: '#4B5563',
+    color: '#64748B',
   },
   periodButtonTextActive: {
     color: '#FFFFFF',
@@ -519,18 +642,18 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginRight: 8,
   },
-  completedStep: {
-    backgroundColor: '#34D399',
-  },
-  stepNumber: {
-    color: '#FFFFFF',
+  stepCircleNumber: {
     fontSize: 12,
-    fontWeight: 'bold',
+    fontWeight: '600',
+    color: '#4B5563',
+  },
+  completedStep: {
+    backgroundColor: '#10B981',
   },
   stepTitle: {
-    fontSize: 16,
-    color: '#1F2937',
+    fontSize: 14,
     fontWeight: '500',
+    color: '#374151',
   },
   daySelector: {
     marginBottom: 16,
@@ -563,6 +686,174 @@ const styles = StyleSheet.create({
   nextMealText: {
     color: '#3B82F6',
     fontWeight: '600',
+  },
+  recipeSection: {
+    marginTop: 24,
+    paddingTop: 24,
+    borderTopWidth: 1,
+    borderTopColor: '#E5E7EB',
+  },
+  recipeSectionTitle: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#1F2937',
+    marginBottom: 16,
+  },
+  recipeDetailsContainer: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 12,
+    padding: 16,
+    marginTop: 16,
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+  },
+  recipeHeader: {
+    marginBottom: 16,
+  },
+  recipeTitleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  recipeName: {
+    fontSize: 20,
+    fontWeight: '600',
+    color: '#1F2937',
+    flex: 1,
+  },
+  traditionalIcon: {
+    marginLeft: 8,
+  },
+  recipeMetaInfo: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  cuisineTag: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#F3F4F6',
+    paddingVertical: 4,
+    paddingHorizontal: 8,
+    borderRadius: 6,
+  },
+  cuisineText: {
+    marginLeft: 4,
+    fontSize: 14,
+    color: '#4B5563',
+  },
+  prepTimeTag: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  prepTimeText: {
+    marginLeft: 4,
+    fontSize: 14,
+    color: '#4B5563',
+  },
+  servingsTag: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  servingsText: {
+    marginLeft: 4,
+    fontSize: 14,
+    color: '#4B5563',
+  },
+  recipeContent: {
+    gap: 16,
+  },
+  recipeDescription: {
+    fontSize: 16,
+    color: '#4B5563',
+    lineHeight: 24,
+  },
+  nutritionInfo: {
+    backgroundColor: '#F3F4F6',
+    padding: 12,
+    borderRadius: 8,
+  },
+  nutritionGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 12,
+    marginTop: 8,
+  },
+  nutritionItem: {
+    flex: 1,
+    minWidth: '45%',
+    backgroundColor: '#FFFFFF',
+    padding: 8,
+    borderRadius: 6,
+    alignItems: 'center',
+  },
+  nutritionLabel: {
+    fontSize: 12,
+    color: '#6B7280',
+  },
+  nutritionValue: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#1F2937',
+    marginTop: 4,
+  },
+  ingredientsSection: {
+    gap: 8,
+  },
+  ingredientItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  ingredientText: {
+    fontSize: 14,
+    color: '#4B5563',
+  },
+  methodSection: {
+    gap: 12,
+  },
+  methodStep: {
+    flexDirection: 'row',
+    gap: 12,
+  },
+  stepNumber: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    backgroundColor: '#3B82F6',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  stepNumberText: {
+    color: '#FFFFFF',
+    fontSize: 12,
+    fontWeight: '600',
+  },
+  methodText: {
+    flex: 1,
+    fontSize: 14,
+    color: '#4B5563',
+    lineHeight: 20,
+  },
+  tipsSection: {
+    gap: 8,
+  },
+  tipItem: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: 8,
+  },
+  tipText: {
+    flex: 1,
+    fontSize: 14,
+    color: '#4B5563',
+    lineHeight: 20,
+  },
+  sectionTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#1F2937',
+    marginBottom: 8,
   },
 });
 

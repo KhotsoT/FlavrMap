@@ -37,6 +37,17 @@
 - Log errors for debugging
 - Handle network errors gracefully 
 
+# Code Change Confirmation Rule
+- NEVER make ANY code changes without explicit user confirmation
+- Always propose changes first and wait for approval
+- This applies to ALL code modifications, including:
+  - Styling changes
+  - Type fixes
+  - Refactoring
+  - New features
+  - Bug fixes
+- Even small changes require explicit confirmation
+
 ---
 
 ## 🧠 Smart Meal Planning Logic (Updated Instructions)
