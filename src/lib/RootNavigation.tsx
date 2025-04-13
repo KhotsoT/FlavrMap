@@ -6,6 +6,7 @@ import { View, Text, ActivityIndicator } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import OnboardingScreen from '../screens/OnboardingScreen';
 import { SignInScreen, SignUpScreen, ForgotPasswordScreen } from '../screens/auth';
+import HomeScreen from '../screens/HomeScreen';
 import type { RootStackParamList, AuthStackParamList, MainTabParamList } from './navigation.types';
 import { useAuthStore } from '../store/authStore';
 
@@ -30,7 +31,6 @@ const PlaceholderScreen = ({ name }: { name: string }) => (
 );
 
 // Main Tab Screens
-const HomeScreen = () => <PlaceholderScreen name="Home" />;
 const RecipesScreen = () => <PlaceholderScreen name="Recipes" />;
 const GroceryCartScreen = () => <PlaceholderScreen name="Grocery Cart" />;
 const StoreFinderScreen = () => <PlaceholderScreen name="Store Finder" />;

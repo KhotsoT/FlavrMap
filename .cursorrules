@@ -36,3 +36,74 @@
 - Show user-friendly error messages
 - Log errors for debugging
 - Handle network errors gracefully 
+
+---
+
+## 🧠 Smart Meal Planning Logic (Updated Instructions)
+
+### ✅ Default Planning Flow
+- The app should default to **"today"** when planning.
+- Users can optionally select to plan for:
+  - A single day (today or tomorrow)
+  - A few days (week)
+  - A full month
+  - Each period maintains its own budget
+
+### 🕒 Time-Aware Meal Prediction
+- The app checks current local time and automatically suggests the **next meal**:
+  - Morning (6:00 - 10:00) → suggest breakfast
+  - Midday (12:00 - 15:00) → suggest lunch
+  - Evening (18:00 - 21:00) → suggest dinner
+
+### 💸 Budget-Aware Meal Selection
+- After the user sets a **budget** for the selected period:
+  - The app recommends **affordable meals** within budget
+  - Tracks remaining budget after selections
+  - Shows traditional South African options
+  - Prioritizes nutritional balance and variety
+
+### 🍽️ Meal Categories
+- **Breakfast Options**:
+  - Mieliepap with Chakalaka (R35.00)
+  - Vetkoek & Mince (R45.00)
+  
+- **Lunch Options**:
+  - Bobotie (R65.00)
+  - Boerewors Roll (R40.00)
+  
+- **Dinner Options**:
+  - Potjiekos (R85.00)
+  - Braai Platter (R120.00)
+
+### 🎯 UI/UX Guidelines
+- Use bottom sheet modals for input
+- Show step indicators for progress
+- Display traditional meal indicators
+- Clear budget status and remaining amounts
+- Support keyboard-aware behavior
+
+### 🔄 State Management
+- Track budgets per time period
+- Maintain meal selections state
+- Calculate remaining budgets
+- Handle time-based suggestions
+
+### 🎨 Visual Elements
+- Currency: South African Rand (R)
+- Colors: Blue primary (#3B82F6)
+- Traditional meal indicator: Star icon
+- Step completion: Green checkmark
+
+### 🛒 Store Selection (Smart Cart + Price Comparison)
+- Search for the **nearest store** offering:
+  - Online shopping
+  - Delivery options
+- Compare prices across stores for ingredients.
+- Select the **cheapest available store** that meets delivery and stock criteria.
+
+### 🔮 Optional Features to Include Later
+- Let users save and repeat past meal plans.
+- Suggest "leftover" meals based on fridge contents or past ingredients.
+- Add filters: allergens, dietary restrictions, cuisine preferences.
+
+---
