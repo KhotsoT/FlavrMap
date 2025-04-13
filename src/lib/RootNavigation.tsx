@@ -2,16 +2,24 @@ import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { View, Text } from 'react-native';
+import { View, Text, ActivityIndicator } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import OnboardingScreen from '../screens/OnboardingScreen';
 import { SignInScreen, SignUpScreen, ForgotPasswordScreen } from '../screens/auth';
 import type { RootStackParamList, AuthStackParamList, MainTabParamList } from './navigation.types';
+import { useAuthStore } from '../store/authStore';
 
 // Create navigators
 const Stack = createNativeStackNavigator<RootStackParamList>();
 const AuthStack = createNativeStackNavigator<AuthStackParamList>();
 const MainTab = createBottomTabNavigator<MainTabParamList>();
+
+// Loading screen component
+const LoadingScreen = () => (
+  <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+    <ActivityIndicator size="large" color="#3B82F6" />
+  </View>
+);
 
 // Placeholder screen component
 const PlaceholderScreen = ({ name }: { name: string }) => (
@@ -126,15 +134,25 @@ const MainNavigator = () => {
 
 // Root Navigation
 function RootNavigation() {
+  const { user, initialized } = useAuthStore();
+
+  if (!initialized) {
+    return <LoadingScreen />;
+  }
+
   return (
     <NavigationContainer>
       <Stack.Navigator 
-        initialRouteName="Onboarding"
         screenOptions={{ headerShown: false }}
       >
-        <Stack.Screen name="Onboarding" component={OnboardingScreen} />
-        <Stack.Screen name="Auth" component={AuthNavigator} />
-        <Stack.Screen name="Main" component={MainNavigator} />
+        {user ? (
+          <Stack.Screen name="Main" component={MainNavigator} />
+        ) : (
+          <>
+            <Stack.Screen name="Onboarding" component={OnboardingScreen} />
+            <Stack.Screen name="Auth" component={AuthNavigator} />
+          </>
+        )}
       </Stack.Navigator>
     </NavigationContainer>
   );

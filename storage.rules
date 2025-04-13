@@ -1,0 +1,43 @@
+rules_version = '2';
+
+service firebase.storage {
+  match /b/{bucket}/o {
+    // Common functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    function isImage() {
+      return request.resource.contentType.matches('image/.*');
+    }
+
+    function isValidSize() {
+      return request.resource.size <= 5 * 1024 * 1024; // 5MB max
+    }
+
+    // User profile images
+    match /users/{userId}/profile/{imageId} {
+      allow read: if true;
+      allow create: if isOwner(userId) && isImage() && isValidSize();
+      allow update, delete: if isOwner(userId);
+    }
+
+    // Recipe images
+    match /recipes/{recipeId}/{imageId} {
+      allow read: if true;
+      allow create: if isAuthenticated() && isImage() && isValidSize();
+      allow update, delete: if isAuthenticated() && 
+        exists(/databases/$(database)/documents/recipes/$(recipeId)) &&
+        get(/databases/$(database)/documents/recipes/$(recipeId)).data.authorId == request.auth.uid;
+    }
+
+    // Default deny
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+} 

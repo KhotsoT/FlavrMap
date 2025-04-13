@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   View,
   Text,
@@ -11,11 +11,10 @@ import {
   Platform,
   ScrollView,
 } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import { AuthStackNavigationProp } from '../../lib/navigation.types';
-import { useAuth } from '../../lib/AuthContext';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import type { AuthStackParamList } from '../../lib/navigation.types';
+import type { AuthStackParamList, RootStackParamList } from '../../lib/navigation.types';
+import { useAuthStore } from '../../store/authStore';
+import { useNavigation } from '@react-navigation/native';
 
 type SignInScreenProps = {
   navigation: NativeStackNavigationProp<AuthStackParamList, 'SignIn'>;
@@ -24,18 +23,41 @@ type SignInScreenProps = {
 const SignInScreen: React.FC<SignInScreenProps> = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const { signIn, loading } = useAuth();
+  const { signIn, loading, error, clearError } = useAuthStore();
+  const passwordInput = useRef<TextInput | null>(null);
+  const rootNavigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+
+  // Clear any errors when component unmounts or screen changes
+  useEffect(() => {
+    return () => clearError();
+  }, [clearError]);
 
   const handleSignIn = async () => {
+    console.log('Sign in attempt with email:', email);
+    
     if (!email || !password) {
+      console.log('Validation failed: Missing fields');
       Alert.alert('Error', 'Please fill in all fields');
       return;
     }
 
     try {
+      console.log('Attempting to sign in...');
       await signIn(email, password);
-    } catch (error) {
-      Alert.alert('Error', error instanceof Error ? error.message : 'Failed to sign in');
+      console.log('Sign in successful');
+      // Navigate to Main screen using root navigation
+      rootNavigation.reset({
+        index: 0,
+        routes: [{ name: 'Main' }],
+      });
+    } catch (error: any) {
+      console.error('Sign in failed:', error);
+      console.error('Error details:', {
+        code: error.code,
+        message: error.message,
+        fullError: JSON.stringify(error, null, 2)
+      });
+      // Error is already handled by the store
     }
   };
 
@@ -52,6 +74,12 @@ const SignInScreen: React.FC<SignInScreenProps> = ({ navigation }) => {
           <Text style={styles.title}>Welcome Back</Text>
           <Text style={styles.subtitle}>Sign in to your account</Text>
           
+          {error && (
+            <View style={styles.errorContainer}>
+              <Text style={styles.errorText}>{error.message}</Text>
+            </View>
+          )}
+          
           <View style={styles.inputContainer}>
             <Text style={styles.label}>Email</Text>
             <TextInput
@@ -61,24 +89,35 @@ const SignInScreen: React.FC<SignInScreenProps> = ({ navigation }) => {
               onChangeText={setEmail}
               autoCapitalize="none"
               keyboardType="email-address"
+              autoComplete="email"
+              autoCorrect={false}
+              spellCheck={false}
               placeholderTextColor="#9CA3AF"
+              editable={!loading}
+              returnKeyType="next"
+              onSubmitEditing={() => passwordInput.current?.focus()}
+              blurOnSubmit={false}
             />
           </View>
           
           <View style={styles.inputContainer}>
             <Text style={styles.label}>Password</Text>
             <TextInput
+              ref={passwordInput}
               style={styles.input}
               placeholder="Enter your password"
               value={password}
               onChangeText={setPassword}
               secureTextEntry
               placeholderTextColor="#9CA3AF"
+              editable={!loading}
+              returnKeyType="done"
+              onSubmitEditing={handleSignIn}
             />
           </View>
           
           <TouchableOpacity 
-            style={styles.button}
+            style={[styles.button, loading && styles.buttonDisabled]}
             onPress={handleSignIn}
             disabled={loading}
           >
@@ -92,6 +131,7 @@ const SignInScreen: React.FC<SignInScreenProps> = ({ navigation }) => {
           <TouchableOpacity
             style={styles.forgotPasswordButton}
             onPress={() => navigation.navigate('ForgotPassword')}
+            disabled={loading}
           >
             <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
           </TouchableOpacity>
@@ -105,6 +145,7 @@ const SignInScreen: React.FC<SignInScreenProps> = ({ navigation }) => {
           <TouchableOpacity 
             onPress={() => navigation.navigate('SignUp')}
             style={styles.signUpButton}
+            disabled={loading}
           >
             <Text style={styles.signUpText}>
               Don't have an account? <Text style={styles.signUpTextBold}>Sign Up</Text>
@@ -145,6 +186,17 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginBottom: 32,
   },
+  errorContainer: {
+    backgroundColor: '#FEE2E2',
+    padding: 12,
+    borderRadius: 8,
+    marginBottom: 20,
+  },
+  errorText: {
+    color: '#DC2626',
+    fontSize: 14,
+    textAlign: 'center',
+  },
   inputContainer: {
     marginBottom: 20,
   },
@@ -169,6 +221,9 @@ const styles = StyleSheet.create({
     padding: 14,
     alignItems: 'center',
     marginTop: 24,
+  },
+  buttonDisabled: {
+    backgroundColor: '#93C5FD',
   },
   buttonText: {
     color: '#fff',

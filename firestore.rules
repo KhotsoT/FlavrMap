@@ -1,0 +1,45 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Common functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    // User profiles
+    match /users/{userId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated() && request.auth.uid == userId;
+      allow update, delete: if isOwner(userId);
+    }
+
+    // Recipes
+    match /recipes/{recipeId} {
+      allow read: if true;  // Public read access
+      allow create: if isAuthenticated();
+      allow update, delete: if isAuthenticated() && 
+        resource.data.authorId == request.auth.uid;
+    }
+
+    // User's grocery lists
+    match /users/{userId}/groceryLists/{listId} {
+      allow read, write: if isOwner(userId);
+    }
+
+    // Store information
+    match /stores/{storeId} {
+      allow read: if true;  // Public read access
+      allow create, update, delete: if false;  // Admin only via backend
+    }
+
+    // Default deny
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+} 

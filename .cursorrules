@@ -1,0 +1,38 @@
+# Export Patterns
+- All React components should use default exports
+- Barrel files (index.ts) should re-export using `export { default as ComponentName }`
+- Types and utilities should use named exports
+
+# Navigation Patterns
+- Stack navigators should be defined in their own files
+- Screen components should be imported through barrel files
+- Navigation types should be centralized in navigation.types.ts
+
+# Styling Patterns
+- Use StyleSheet.create for all styles
+- Colors should use consistent hex values (#3B82F6 for primary blue)
+- Typography should follow consistent sizing (14px, 16px, 28px)
+
+# State Management Patterns
+- Use Zustand for global state management
+- Store files should be in src/store directory
+- Each store should have its own file with a clear purpose
+- Use TypeScript for store definitions
+
+# Firebase Integration Patterns
+- Firebase config should be in src/lib/firebase.ts
+- Authentication logic should be in src/lib/auth.ts
+- Firestore queries should be in respective service files
+- Use proper error handling and loading states
+
+# Form Handling Patterns
+- All forms should have proper validation
+- Use consistent error messages
+- Show loading states during async operations
+- Disable submit buttons when form is invalid
+
+# Error Handling Patterns
+- Use try-catch blocks for async operations
+- Show user-friendly error messages
+- Log errors for debugging
+- Handle network errors gracefully 

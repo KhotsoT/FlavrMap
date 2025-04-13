@@ -23,7 +23,7 @@
     "noUnusedParameters": false,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
-    "types": ["react-native"]
+    "types": ["react-native", "node"]
   },
   "include": [
     "src",

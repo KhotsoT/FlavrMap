@@ -39,16 +39,14 @@ class ErrorBoundary extends React.Component<
 }
 
 // Root App component
-function App() {
+export default function App() {
   return (
     <ErrorBoundary>
-      <AuthProvider>
-        <SafeAreaProvider>
+      <SafeAreaProvider>
+        <AuthProvider>
           <RootNavigation />
-        </SafeAreaProvider>
-      </AuthProvider>
+        </AuthProvider>
+      </SafeAreaProvider>
     </ErrorBoundary>
   );
 }
-
-export default App;

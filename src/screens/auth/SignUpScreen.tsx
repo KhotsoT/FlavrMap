@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   View,
   Text,
@@ -8,10 +8,13 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
+  ActivityIndicator,
   Alert,
 } from 'react-native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import type { AuthStackParamList } from '../../lib/navigation.types';
+import type { AuthStackParamList, RootStackParamList } from '../../lib/navigation.types';
+import { useAuthStore } from '../../store/authStore';
+import { useNavigation } from '@react-navigation/native';
 
 type SignUpScreenProps = {
   navigation: NativeStackNavigationProp<AuthStackParamList, 'SignUp'>;
@@ -21,19 +24,49 @@ const SignUpScreen: React.FC<SignUpScreenProps> = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const { signUp, loading, error, clearError } = useAuthStore();
+  const rootNavigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+  const passwordInput = useRef<TextInput | null>(null);
+  const confirmPasswordInput = useRef<TextInput | null>(null);
 
-  const handleSignUp = () => {
+  // Clear any errors when component unmounts or screen changes
+  useEffect(() => {
+    return () => clearError();
+  }, [clearError]);
+
+  const handleSignUp = async () => {
+    console.log('Sign up attempt with email:', email);
+    
     if (!email || !password || !confirmPassword) {
+      console.log('Validation failed: Missing fields');
       Alert.alert('Error', 'Please fill in all fields');
       return;
     }
     
     if (password !== confirmPassword) {
+      console.log('Validation failed: Passwords do not match');
       Alert.alert('Error', 'Passwords do not match');
       return;
     }
-    // TODO: Implement sign up logic
-    console.log('Sign up with:', { email, password });
+
+    try {
+      console.log('Attempting to sign up...');
+      await signUp(email, password);
+      console.log('Sign up successful');
+      // Navigate to Main screen using root navigation
+      rootNavigation.reset({
+        index: 0,
+        routes: [{ name: 'Main' }],
+      });
+    } catch (error: any) {
+      console.error('Sign up failed:', error);
+      console.error('Error details:', {
+        code: error.code,
+        message: error.message,
+        fullError: JSON.stringify(error, null, 2)
+      });
+      // Error is already handled by the store
+    }
   };
 
   return (
@@ -49,6 +82,12 @@ const SignUpScreen: React.FC<SignUpScreenProps> = ({ navigation }) => {
           <Text style={styles.title}>Create Account</Text>
           <Text style={styles.subtitle}>Join FlavrMap today</Text>
 
+          {error && (
+            <View style={styles.errorContainer}>
+              <Text style={styles.errorText}>{error.message}</Text>
+            </View>
+          )}
+
           <View style={styles.inputContainer}>
             <Text style={styles.label}>Email</Text>
             <TextInput
@@ -59,13 +98,20 @@ const SignUpScreen: React.FC<SignUpScreenProps> = ({ navigation }) => {
               keyboardType="email-address"
               autoCapitalize="none"
               autoComplete="email"
+              autoCorrect={false}
+              spellCheck={false}
               placeholderTextColor="#9CA3AF"
+              editable={!loading}
+              returnKeyType="next"
+              onSubmitEditing={() => passwordInput.current?.focus()}
+              blurOnSubmit={false}
             />
           </View>
 
           <View style={styles.inputContainer}>
             <Text style={styles.label}>Password</Text>
             <TextInput
+              ref={passwordInput}
               style={styles.input}
               value={password}
               onChangeText={setPassword}
@@ -74,12 +120,17 @@ const SignUpScreen: React.FC<SignUpScreenProps> = ({ navigation }) => {
               autoCapitalize="none"
               autoComplete="password-new"
               placeholderTextColor="#9CA3AF"
+              editable={!loading}
+              returnKeyType="next"
+              onSubmitEditing={() => confirmPasswordInput.current?.focus()}
+              blurOnSubmit={false}
             />
           </View>
 
           <View style={styles.inputContainer}>
             <Text style={styles.label}>Confirm Password</Text>
             <TextInput
+              ref={confirmPasswordInput}
               style={styles.input}
               value={confirmPassword}
               onChangeText={setConfirmPassword}
@@ -88,14 +139,22 @@ const SignUpScreen: React.FC<SignUpScreenProps> = ({ navigation }) => {
               autoCapitalize="none"
               autoComplete="password-new"
               placeholderTextColor="#9CA3AF"
+              editable={!loading}
+              returnKeyType="done"
+              onSubmitEditing={handleSignUp}
             />
           </View>
 
           <TouchableOpacity 
-            style={styles.button}
+            style={[styles.button, loading && styles.buttonDisabled]}
             onPress={handleSignUp}
+            disabled={loading}
           >
-            <Text style={styles.buttonText}>Create Account</Text>
+            {loading ? (
+              <ActivityIndicator color="#fff" />
+            ) : (
+              <Text style={styles.buttonText}>Create Account</Text>
+            )}
           </TouchableOpacity>
 
           <View style={styles.divider}>
@@ -107,6 +166,7 @@ const SignUpScreen: React.FC<SignUpScreenProps> = ({ navigation }) => {
           <TouchableOpacity 
             style={styles.signInButton}
             onPress={() => navigation.navigate('SignIn')}
+            disabled={loading}
           >
             <Text style={styles.signInText}>
               Already have an account? <Text style={styles.signInTextBold}>Sign In</Text>
@@ -147,6 +207,17 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginBottom: 32,
   },
+  errorContainer: {
+    backgroundColor: '#FEE2E2',
+    padding: 12,
+    borderRadius: 8,
+    marginBottom: 20,
+  },
+  errorText: {
+    color: '#DC2626',
+    fontSize: 14,
+    textAlign: 'center',
+  },
   inputContainer: {
     marginBottom: 20,
   },
@@ -171,6 +242,9 @@ const styles = StyleSheet.create({
     padding: 14,
     alignItems: 'center',
     marginTop: 24,
+  },
+  buttonDisabled: {
+    backgroundColor: '#93C5FD',
   },
   buttonText: {
     color: '#fff',
