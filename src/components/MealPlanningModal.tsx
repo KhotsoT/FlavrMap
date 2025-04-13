@@ -12,6 +12,8 @@ import {
   Dimensions,
   Animated,
   FlatList,
+  TextInput,
+  ActivityIndicator,
 } from 'react-native';
 import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
 import { MealTime } from './MealPlanner';
@@ -24,6 +26,9 @@ export interface MealOption {
   description: string;
   prepTime: string;
   isTraditional?: boolean;
+  nutritionalValue: string;
+  cuisine?: string;
+  ingredients?: string[];
 }
 
 export interface MealPlanningModalProps {
@@ -35,112 +40,110 @@ export interface MealPlanningModalProps {
   currentBudget: number;
 }
 
-// Sample meal options with diverse cuisines
+// Traditional South African meal options with prices
 const MEAL_OPTIONS: MealOption[] = [
   // Breakfast Options
   {
     id: 'b1',
-    name: 'Continental Breakfast',
-    price: 45.00,
-    category: 'breakfast',
-    description: 'Fresh croissants, fruits, yogurt, and coffee',
-    prepTime: '15 mins',
-    isTraditional: true,
-  },
-  {
-    id: 'b2',
-    name: 'English Breakfast',
-    price: 85.00,
-    category: 'breakfast',
-    description: 'Eggs, bacon, sausages, beans, and toast',
-    prepTime: '25 mins',
-  },
-  {
-    id: 'b3',
     name: 'Mieliepap with Chakalaka',
     price: 35.00,
     category: 'breakfast',
-    description: 'Traditional porridge with spicy vegetable relish',
+    description: 'Traditional maize porridge served with spicy vegetable relish',
     prepTime: '20 mins',
     isTraditional: true,
+    nutritionalValue: 'High in carbs, fiber, vitamins',
+    cuisine: 'South African'
   },
   {
-    id: 'b4',
-    name: 'Japanese Breakfast Set',
-    price: 75.00,
+    id: 'b2',
+    name: 'Vetkoek & Mince',
+    price: 45.00,
     category: 'breakfast',
-    description: 'Grilled fish, miso soup, rice, and pickled vegetables',
-    prepTime: '30 mins',
+    description: 'Deep-fried bread filled with seasoned minced meat',
+    prepTime: '25 mins',
+    isTraditional: true,
+    nutritionalValue: 'High in protein, carbs',
+    cuisine: 'South African'
+  },
+  {
+    id: 'b3',
+    name: 'Fruit and Yogurt Bowl',
+    price: 40.00,
+    category: 'breakfast',
+    description: 'Fresh seasonal fruits with local yogurt',
+    prepTime: '15 mins',
+    nutritionalValue: 'Rich in vitamins, probiotics',
+    cuisine: 'International'
   },
 
   // Lunch Options
   {
     id: 'l1',
-    name: 'Mediterranean Salad Bowl',
+    name: 'Bobotie',
     price: 65.00,
     category: 'lunch',
-    description: 'Fresh greens, feta, olives, and grilled chicken',
-    prepTime: '15 mins',
+    description: 'Spiced minced meat bake with egg custard topping',
+    prepTime: '35 mins',
+    isTraditional: true,
+    nutritionalValue: 'High in protein, moderate carbs',
+    cuisine: 'South African'
   },
   {
     id: 'l2',
-    name: 'Butter Chicken with Naan',
-    price: 85.00,
-    category: 'lunch',
-    description: 'Creamy curry served with fresh naan bread',
-    prepTime: '35 mins',
-  },
-  {
-    id: 'l3',
-    name: 'Pad Thai',
-    price: 70.00,
-    category: 'lunch',
-    description: 'Stir-fried rice noodles with shrimp and peanuts',
-    prepTime: '20 mins',
-  },
-  {
-    id: 'l4',
     name: 'Boerewors Roll',
     price: 40.00,
     category: 'lunch',
-    description: 'Grilled sausage in a fresh roll with chakalaka',
+    description: 'Traditional South African sausage in a fresh roll',
     prepTime: '15 mins',
     isTraditional: true,
+    nutritionalValue: 'High in protein',
+    cuisine: 'South African'
+  },
+  {
+    id: 'l3',
+    name: 'Pap and Wors',
+    price: 55.00,
+    category: 'lunch',
+    description: 'Maize meal porridge with grilled boerewors',
+    prepTime: '20 mins',
+    isTraditional: true,
+    nutritionalValue: 'High in protein, carbs',
+    cuisine: 'South African'
   },
 
   // Dinner Options
   {
     id: 'd1',
-    name: 'Grilled Salmon',
-    price: 120.00,
-    category: 'dinner',
-    description: 'Fresh salmon with roasted vegetables',
-    prepTime: '25 mins',
-  },
-  {
-    id: 'd2',
-    name: 'Spaghetti Carbonara',
-    price: 75.00,
-    category: 'dinner',
-    description: 'Classic pasta with creamy egg sauce and pancetta',
-    prepTime: '20 mins',
-  },
-  {
-    id: 'd3',
     name: 'Potjiekos',
     price: 85.00,
     category: 'dinner',
-    description: 'Traditional slow-cooked meat and vegetable stew',
+    description: 'Slow-cooked meat and vegetable stew',
     prepTime: '180 mins',
     isTraditional: true,
+    nutritionalValue: 'Balanced protein, vegetables',
+    cuisine: 'South African'
   },
   {
-    id: 'd4',
-    name: 'Sushi Platter',
-    price: 130.00,
+    id: 'd2',
+    name: 'Braai Platter',
+    price: 120.00,
     category: 'dinner',
-    description: 'Assorted sushi rolls and sashimi',
-    prepTime: '40 mins',
+    description: 'Grilled meats with pap and chakalaka',
+    prepTime: '25 mins',
+    isTraditional: true,
+    nutritionalValue: 'High in protein, balanced sides',
+    cuisine: 'South African'
+  },
+  {
+    id: 'd3',
+    name: 'Umngqusho',
+    price: 70.00,
+    category: 'dinner',
+    description: 'Samp and beans with vegetables',
+    prepTime: '20 mins',
+    isTraditional: true,
+    nutritionalValue: 'High in protein, fiber',
+    cuisine: 'South African'
   },
 ];
 
@@ -192,6 +195,9 @@ const MealPlanningModal: React.FC<MealPlanningModalProps> = ({
   const [selectedCuisine, setSelectedCuisine] = useState<string>('all');
   const [currentPage, setCurrentPage] = useState(0);
   const [fadeAnim] = useState(new Animated.Value(1));
+  const [searchQuery, setSearchQuery] = useState('');
+  const [isSearching, setIsSearching] = useState(false);
+  const [customRecipes, setCustomRecipes] = useState<MealOption[]>([]);
 
   const filteredMeals = useMemo(() => {
     return MEAL_OPTIONS.filter((meal) => {
@@ -293,6 +299,77 @@ const MealPlanningModal: React.FC<MealPlanningModalProps> = ({
     </TouchableOpacity>
   );
 
+  const formatPrice = (price: number) => `R${price.toFixed(2)}`;
+
+  // Generate recipe variations based on search query
+  const generateRecipeVariations = async (query: string) => {
+    setIsSearching(true);
+    // Simulate API call to recipe service
+    // In a real app, this would call a recipe API
+    setTimeout(() => {
+      const variations: MealOption[] = [
+        {
+          id: 'custom1',
+          name: `Classic ${query}`,
+          price: Math.min(budget, 75.00),
+          description: `Traditional recipe for ${query}`,
+          isTraditional: false,
+          category: mealType,
+          nutritionalValue: 'Balanced meal',
+          cuisine: 'International',
+          prepTime: '30 mins'
+        },
+        {
+          id: 'custom2',
+          name: `Vegetarian ${query}`,
+          price: Math.min(budget, 65.00),
+          description: `Meat-free version of ${query}`,
+          isTraditional: false,
+          category: mealType,
+          nutritionalValue: 'Plant-based protein',
+          cuisine: 'International',
+          prepTime: '25 mins'
+        },
+        {
+          id: 'custom3',
+          name: `Spicy ${query}`,
+          price: Math.min(budget, 70.00),
+          description: `Hot and spicy version of ${query}`,
+          isTraditional: false,
+          category: mealType,
+          nutritionalValue: 'Balanced meal',
+          cuisine: 'Fusion',
+          prepTime: '35 mins'
+        },
+        {
+          id: 'custom4',
+          name: `Low-Carb ${query}`,
+          price: Math.min(budget, 85.00),
+          description: `Healthy, low-carb version of ${query}`,
+          isTraditional: false,
+          category: mealType,
+          nutritionalValue: 'High protein, low carb',
+          cuisine: 'Health',
+          prepTime: '30 mins'
+        },
+        {
+          id: 'custom5',
+          name: `Gourmet ${query}`,
+          price: Math.min(budget, 95.00),
+          description: `Premium version of ${query} with special ingredients`,
+          isTraditional: false,
+          category: mealType,
+          nutritionalValue: 'Gourmet balanced meal',
+          cuisine: 'Fusion',
+          prepTime: '45 mins'
+        },
+      ];
+
+      setCustomRecipes(variations.filter(meal => meal.price <= budget));
+      setIsSearching(false);
+    }, 1500);
+  };
+
   return (
     <Modal
       visible={visible}
@@ -322,130 +399,162 @@ const MealPlanningModal: React.FC<MealPlanningModalProps> = ({
             </TouchableOpacity>
           </View>
 
-          <View style={styles.budgetInfo}>
-            <MaterialCommunityIcons name="wallet" size={20} color="#3B82F6" />
-            <Text style={styles.budgetText}>
-              Budget: R{currentBudget.toFixed(2)} (Remaining: R{budget.toFixed(2)})
+          <View style={styles.budgetContainer}>
+            <View style={styles.budgetInfo}>
+              <MaterialCommunityIcons name="wallet" size={20} color="#3B82F6" />
+              <Text style={styles.budgetText}>
+                Budget: {formatPrice(currentBudget)}
+              </Text>
+            </View>
+            <Text style={styles.remainingBudget}>
+              Remaining: {formatPrice(budget)}
             </Text>
           </View>
 
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            style={styles.cuisineFilter}
-            contentContainerStyle={styles.cuisineFilterContent}
-          >
-            {availableCuisines.map((cuisine) => (
+          <View style={styles.searchSection}>
+            <View style={styles.searchContainer}>
+              <TextInput
+                style={styles.searchInput}
+                placeholder="Search or type a meal (e.g. lamb chops)"
+                value={searchQuery}
+                onChangeText={setSearchQuery}
+                onSubmitEditing={() => generateRecipeVariations(searchQuery)}
+                returnKeyType="search"
+              />
               <TouchableOpacity
-                key={cuisine}
+                style={styles.searchButton}
+                onPress={() => generateRecipeVariations(searchQuery)}
+              >
+                <MaterialIcons name="search" size={24} color="#FFFFFF" />
+              </TouchableOpacity>
+            </View>
+          </View>
+
+          <View style={styles.filterTabs}>
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={styles.filterTabsContent}
+            >
+              <TouchableOpacity
                 style={[
-                  styles.cuisineButton,
-                  selectedCuisine === cuisine && styles.cuisineButtonActive,
+                  styles.filterTab,
+                  selectedCuisine === 'all' && styles.filterTabActive,
                 ]}
-                onPress={() => {
-                  setSelectedCuisine(cuisine);
-                  setCurrentPage(0);
-                }}
+                onPress={() => setSelectedCuisine('all')}
               >
                 <MaterialCommunityIcons
-                  name={getCuisineIcon(cuisine)}
-                  size={16}
-                  color={selectedCuisine === cuisine ? '#FFFFFF' : '#64748B'}
-                  style={styles.cuisineIcon}
+                  name="silverware-fork-knife"
+                  size={20}
+                  color={selectedCuisine === 'all' ? '#FFFFFF' : '#64748B'}
                 />
                 <Text
                   style={[
-                    styles.cuisineButtonText,
-                    selectedCuisine === cuisine && styles.cuisineButtonTextActive,
+                    styles.filterTabText,
+                    selectedCuisine === 'all' && styles.filterTabTextActive,
                   ]}
                 >
-                  {cuisine === 'all' ? 'All Cuisines' : cuisine}
+                  All Cuisines
                 </Text>
               </TouchableOpacity>
-            ))}
-          </ScrollView>
-
-          <ScrollView 
-            style={styles.mealList}
-            showsVerticalScrollIndicator={false}
-          >
-            <Animated.View style={[styles.mealGrid, { opacity: fadeAnim }]}>
-              {paginatedMeals.map((meal) => (
+              {['breakfast', 'lunch', 'dinner'].map((type) => (
                 <TouchableOpacity
-                  key={meal.id}
-                  style={styles.mealCard}
-                  onPress={() => {
-                    onSelect(meal);
-                    onClose();
-                  }}
+                  key={type}
+                  style={[
+                    styles.filterTab,
+                    selectedCuisine === type && styles.filterTabActive,
+                  ]}
+                  onPress={() => setSelectedCuisine(type)}
                 >
-                  <View style={styles.mealImageContainer}>
-                    <View style={styles.mealImage}>
-                      <MaterialCommunityIcons
-                        name={getCuisineIcon(meal.category)}
-                        size={24}
-                        color="#3B82F6"
-                      />
-                    </View>
-                    {meal.isTraditional && (
-                      <MaterialCommunityIcons
-                        name="star"
-                        size={16}
-                        color="#EAB308"
-                        style={styles.traditionalIcon}
-                      />
-                    )}
-                  </View>
-
-                  <View style={styles.mealHeader}>
-                    <Text style={styles.mealName} numberOfLines={1}>
-                      {meal.name}
-                    </Text>
-                    <View style={styles.cuisineTagContainer}>
-                      <MaterialCommunityIcons
-                        name={getCuisineIcon(meal.category)}
-                        size={12}
-                        color="#64748B"
-                        style={styles.cuisineTagIcon}
-                      />
-                      <Text style={styles.cuisineTag}>{meal.category}</Text>
-                    </View>
-                  </View>
-
-                  <Text style={styles.mealDescription} numberOfLines={2}>
-                    {meal.description}
+                  <MaterialCommunityIcons
+                    name={getMealTypeIcon(type as MealTime)}
+                    size={20}
+                    color={selectedCuisine === type ? '#FFFFFF' : '#64748B'}
+                  />
+                  <Text
+                    style={[
+                      styles.filterTabText,
+                      selectedCuisine === type && styles.filterTabTextActive,
+                    ]}
+                  >
+                    {type.charAt(0).toUpperCase() + type.slice(1)}
                   </Text>
-
-                  <View style={styles.mealFooter}>
-                    <View style={styles.mealMeta}>
-                      <View style={styles.mealTiming}>
-                        <MaterialIcons
-                          name="schedule"
-                          size={14}
-                          color="#64748B"
-                        />
-                        <Text style={styles.timingText}>{meal.prepTime}</Text>
-                      </View>
-                    </View>
-                    <Text style={styles.mealPrice}>R {meal.price.toFixed(2)}</Text>
-                  </View>
                 </TouchableOpacity>
               ))}
-            </Animated.View>
-            {filteredMeals.length === 0 && (
-              <View style={styles.emptyState}>
-                <MaterialCommunityIcons
-                  name="food-off"
-                  size={48}
-                  color="#94A3B8"
-                />
-                <Text style={styles.emptyStateText}>
-                  No meals available within your remaining budget of R{budget.toFixed(2)}
-                </Text>
+            </ScrollView>
+          </View>
+
+          <ScrollView style={styles.resultsContainer}>
+            {isSearching ? (
+              <View style={styles.loadingContainer}>
+                <ActivityIndicator size="large" color="#3B82F6" />
+                <Text style={styles.loadingText}>Finding meal variations...</Text>
               </View>
+            ) : searchQuery && customRecipes.length > 0 ? (
+              <>
+                <Text style={styles.sectionTitle}>Recipe Variations</Text>
+                {customRecipes.map((meal) => (
+                  <TouchableOpacity
+                    key={meal.id}
+                    style={styles.mealCard}
+                    onPress={() => onSelect(meal)}
+                  >
+                    <View style={styles.mealHeader}>
+                      <View style={styles.mealTitleContainer}>
+                        <Text style={styles.mealName}>{meal.name}</Text>
+                        <View style={styles.cuisineTagContainer}>
+                          <Text style={styles.cuisineTag}>{meal.cuisine}</Text>
+                        </View>
+                      </View>
+                      <Text style={styles.mealPrice}>{formatPrice(meal.price)}</Text>
+                    </View>
+                    <Text style={styles.mealDescription}>{meal.description}</Text>
+                    <View style={styles.mealFooter}>
+                      <View style={styles.mealMeta}>
+                        <MaterialIcons name="schedule" size={16} color="#64748B" />
+                        <Text style={styles.timingText}>{meal.prepTime}</Text>
+                      </View>
+                      <Text style={styles.nutritionalValue}>{meal.nutritionalValue}</Text>
+                    </View>
+                  </TouchableOpacity>
+                ))}
+              </>
+            ) : (
+              <>
+                <Text style={styles.sectionTitle}>Available Meals</Text>
+                {paginatedMeals.map((meal) => (
+                  <TouchableOpacity
+                    key={meal.id}
+                    style={styles.mealCard}
+                    onPress={() => onSelect(meal)}
+                  >
+                    <View style={styles.mealHeader}>
+                      <View style={styles.mealTitleContainer}>
+                        <Text style={styles.mealName}>{meal.name}</Text>
+                        {meal.isTraditional && (
+                          <MaterialIcons
+                            name="star"
+                            size={16}
+                            color="#FFB800"
+                            style={styles.traditionalIcon}
+                          />
+                        )}
+                      </View>
+                      <Text style={styles.mealPrice}>{formatPrice(meal.price)}</Text>
+                    </View>
+                    <Text style={styles.mealDescription}>{meal.description}</Text>
+                    <View style={styles.mealFooter}>
+                      <View style={styles.mealMeta}>
+                        <MaterialIcons name="schedule" size={16} color="#64748B" />
+                        <Text style={styles.timingText}>{meal.prepTime}</Text>
+                      </View>
+                      <Text style={styles.nutritionalValue}>{meal.nutritionalValue}</Text>
+                    </View>
+                  </TouchableOpacity>
+                ))}
+              </>
             )}
           </ScrollView>
-          {renderPagination()}
         </View>
       </KeyboardAvoidingView>
     </Modal>
@@ -455,7 +564,7 @@ const MealPlanningModal: React.FC<MealPlanningModalProps> = ({
 const styles = StyleSheet.create({
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    backgroundColor: 'rgba(0, 0, 0, 0.6)',
     justifyContent: 'flex-end',
   },
   modalContent: {
@@ -485,28 +594,68 @@ const styles = StyleSheet.create({
     color: '#1E293B',
   },
   closeButton: {
-    padding: 4,
+    padding: 8,
+    borderRadius: 20,
+    backgroundColor: '#F1F5F9',
+  },
+  budgetContainer: {
+    padding: 16,
+    backgroundColor: '#F8FAFC',
+    borderBottomWidth: 1,
+    borderBottomColor: '#E2E8F0',
   },
   budgetInfo: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: 16,
-    backgroundColor: '#F8FAFC',
+    marginBottom: 4,
   },
   budgetText: {
     marginLeft: 8,
     fontSize: 16,
+    color: '#1E293B',
+    fontWeight: '600',
+  },
+  remainingBudget: {
+    marginLeft: 28,
+    fontSize: 14,
     color: '#3B82F6',
     fontWeight: '500',
   },
-  cuisineFilter: {
+  searchSection: {
+    padding: 16,
     borderBottomWidth: 1,
     borderBottomColor: '#E2E8F0',
   },
-  cuisineFilterContent: {
+  searchContainer: {
+    flexDirection: 'row',
+    gap: 8,
+  },
+  searchInput: {
+    flex: 1,
+    height: 44,
+    backgroundColor: '#F3F4F6',
+    borderRadius: 8,
+    paddingHorizontal: 16,
+    fontSize: 16,
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+  },
+  searchButton: {
+    width: 44,
+    height: 44,
+    backgroundColor: '#3B82F6',
+    borderRadius: 8,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  filterTabs: {
+    borderBottomWidth: 1,
+    borderBottomColor: '#E2E8F0',
+  },
+  filterTabsContent: {
     padding: 16,
   },
-  cuisineButton: {
+  filterTab: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 16,
@@ -515,30 +664,33 @@ const styles = StyleSheet.create({
     backgroundColor: '#F1F5F9',
     marginRight: 8,
   },
-  cuisineButtonActive: {
+  filterTabActive: {
     backgroundColor: '#3B82F6',
   },
-  cuisineIcon: {
-    marginRight: 6,
-  },
-  cuisineButtonText: {
+  filterTabText: {
+    marginLeft: 6,
+    fontSize: 14,
     color: '#64748B',
     fontWeight: '500',
   },
-  cuisineButtonTextActive: {
+  filterTabTextActive: {
     color: '#FFFFFF',
   },
-  mealList: {
+  resultsContainer: {
     flex: 1,
-  },
-  mealGrid: {
     padding: 16,
+  },
+  sectionTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#1E293B',
+    marginBottom: 12,
   },
   mealCard: {
     backgroundColor: '#FFFFFF',
-    borderRadius: 16,
+    borderRadius: 12,
     padding: 16,
-    marginBottom: 16,
+    marginBottom: 12,
     borderWidth: 1,
     borderColor: '#E2E8F0',
     elevation: 2,
@@ -547,52 +699,40 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 4,
   },
-  mealImageContainer: {
+  mealHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
-    marginBottom: 12,
-  },
-  mealImage: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    backgroundColor: '#EFF6FF',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  mealHeader: {
     marginBottom: 8,
+  },
+  mealTitleContainer: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   mealName: {
     fontSize: 16,
     fontWeight: '600',
     color: '#1E293B',
-    marginBottom: 4,
+    marginRight: 8,
+  },
+  traditionalIcon: {
+    marginLeft: 4,
   },
   cuisineTagContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
     backgroundColor: '#F1F5F9',
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 12,
-    alignSelf: 'flex-start',
-  },
-  cuisineTagIcon: {
-    marginRight: 4,
   },
   cuisineTag: {
     fontSize: 12,
     color: '#64748B',
   },
-  traditionalIcon: {
-    position: 'absolute',
-    top: -4,
-    right: -4,
-    backgroundColor: '#FFFFFF',
-    borderRadius: 8,
-    padding: 2,
+  mealPrice: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#3B82F6',
   },
   mealDescription: {
     fontSize: 14,
@@ -603,35 +743,30 @@ const styles = StyleSheet.create({
   mealFooter: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'flex-end',
+    alignItems: 'center',
   },
   mealMeta: {
-    flex: 1,
-  },
-  mealTiming: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 4,
   },
   timingText: {
     marginLeft: 4,
     fontSize: 14,
     color: '#64748B',
   },
-  mealPrice: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#3B82F6',
-  },
-  emptyState: {
-    alignItems: 'center',
-    padding: 24,
-  },
-  emptyStateText: {
-    marginTop: 12,
-    fontSize: 16,
+  nutritionalValue: {
+    fontSize: 12,
     color: '#64748B',
-    textAlign: 'center',
+    fontStyle: 'italic',
+  },
+  loadingContainer: {
+    padding: 32,
+    alignItems: 'center',
+  },
+  loadingText: {
+    marginTop: 12,
+    fontSize: 14,
+    color: '#64748B',
   },
   paginationContainer: {
     flexDirection: 'row',

@@ -107,3 +107,24 @@
 - Add filters: allergens, dietary restrictions, cuisine preferences.
 
 ---
+---
+
+## 📅 Weekly Meal Planning UX (Updated Instructions)
+
+### 🧭 Flow: Choosing Days to Plan
+- When the user selects the **"Week"** option in the meal planner:
+  - A **calendar view** of the current week should appear.
+  - Each day (Monday to Sunday) is displayed in a tappable format (e.g., pill buttons, calendar grid).
+
+### 🎯 Day Selection Logic
+- The user can **tap on one or more days** they wish to plan meals for.
+- When a day is selected:
+  - The "Plan Meals" button becomes **enabled** for that specific day.
+  - Meals planned for that day should reflect the time-based suggestion logic (e.g., if it's evening, suggest dinner first).
+
+### 💾 Optional Enhancements (Optional to implement later)
+- Visually indicate already planned days (e.g., checkmark or color change).
+- Allow long-press to clone meal plan from another day.
+- Show total estimated budget for selected days.
+
+---

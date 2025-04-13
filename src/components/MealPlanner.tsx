@@ -72,26 +72,35 @@ const MealPlanner: React.FC = () => {
     month: [],
   });
 
+  // Get the current hour in 24-hour format
+  const getCurrentHour = () => {
+    return new Date().getHours();
+  };
+
+  // Predict the next meal based on current time
+  const predictNextMeal = (): MealTime => {
+    const hour = getCurrentHour();
+    if (hour < 10) return 'breakfast';
+    if (hour < 15) return 'lunch';
+    return 'dinner';
+  };
+
+  // Get remaining meals for today based on current time
+  const getRemainingMeals = (): MealTime[] => {
+    const hour = getCurrentHour();
+    if (hour < 10) return ['breakfast', 'lunch', 'dinner'];
+    if (hour < 15) return ['lunch', 'dinner'];
+    if (hour < 21) return ['dinner'];
+    return [];
+  };
+
+  // Update current meal based on time when selecting 'today'
   useEffect(() => {
-    const hour = new Date().getHours();
-    // South African meal times
-    if (hour >= 6 && hour < 10) {
-      setCurrentMeal('breakfast');
-    } else if (hour >= 12 && hour < 15) {
-      setCurrentMeal('lunch');
-    } else if (hour >= 18 && hour < 21) {
-      setCurrentMeal('dinner');
-    } else {
-      // Outside of meal times, suggest the next meal
-      if (hour < 6 || hour >= 21) {
-        setCurrentMeal('breakfast');
-      } else if (hour >= 10 && hour < 12) {
-        setCurrentMeal('lunch');
-      } else {
-        setCurrentMeal('dinner');
-      }
+    if (planningPeriod === 'today') {
+      const nextMeal = predictNextMeal();
+      setCurrentMeal(nextMeal);
     }
-  }, []);
+  }, [planningPeriod]);
 
   const getMealIcon = (mealType: MealTime) => {
     switch (mealType) {
@@ -303,12 +312,18 @@ const MealPlanner: React.FC = () => {
           )}
 
           <View style={styles.mealsContainer}>
-            {(['breakfast', 'lunch', 'dinner'] as MealTime[]).map((mealType) => {
+            {(planningPeriod === 'today' ? getRemainingMeals() : ['breakfast', 'lunch', 'dinner'] as MealTime[]).map((mealType) => {
               const selectedMeal = getSelectedMealForTypeAndDay(mealType, selectedDay);
+              const isNextMeal = planningPeriod === 'today' && mealType === predictNextMeal();
+              
               return (
                 <TouchableOpacity
                   key={mealType}
-                  style={[styles.mealButton, selectedMeal && styles.mealButtonSelected]}
+                  style={[
+                    styles.mealButton,
+                    selectedMeal && styles.mealButtonSelected,
+                    isNextMeal && styles.nextMealButton
+                  ]}
                   onPress={() => {
                     setCurrentMeal(mealType);
                     setMealPlanningModalVisible(true);
@@ -316,10 +331,11 @@ const MealPlanner: React.FC = () => {
                   disabled={getRemainingBudget() <= 0}
                 >
                   <View style={styles.mealButtonContent}>
-                    <MaterialIcons name={getMealIcon(mealType)} size={24} color="#3B82F6" />
+                    <MaterialIcons name={getMealIcon(mealType)} size={24} color={isNextMeal ? '#3B82F6' : '#6B7280'} />
                     <View style={styles.mealButtonText}>
-                      <Text style={styles.mealType}>
+                      <Text style={[styles.mealType, isNextMeal && styles.nextMealText]}>
                         {mealType.charAt(0).toUpperCase() + mealType.slice(1)}
+                        {isNextMeal && ' (Next Meal)'}
                       </Text>
                       <Text style={styles.mealTime}>{getMealTimeRange(mealType)}</Text>
                     </View>
@@ -327,9 +343,7 @@ const MealPlanner: React.FC = () => {
                   {selectedMeal && (
                     <View style={styles.selectedMealInfo}>
                       <Text style={styles.selectedMealName}>{selectedMeal.meal.name}</Text>
-                      <Text style={styles.selectedMealPrice}>
-                        {formatBudget(selectedMeal.meal.price)}
-                      </Text>
+                      <Text style={styles.selectedMealPrice}>R{selectedMeal.meal.price.toFixed(2)}</Text>
                     </View>
                   )}
                 </TouchableOpacity>
@@ -541,6 +555,14 @@ const styles = StyleSheet.create({
   },
   dayButtonTextActive: {
     color: '#FFFFFF',
+  },
+  nextMealButton: {
+    borderColor: '#3B82F6',
+    borderWidth: 2,
+  },
+  nextMealText: {
+    color: '#3B82F6',
+    fontWeight: '600',
   },
 });
 
