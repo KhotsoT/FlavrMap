@@ -19,8 +19,9 @@
 - **React Navigation**: 6.1.9
 - **React Navigation Native Stack**: 6.9.17
 - **React Navigation Bottom Tabs**: 6.5.11
-- **React Native Screens**: 3.29.0
-- **React Native Safe Area Context**: 4.8.2
+- **React Native Screens**: 4.4.0
+- **React Native Safe Area Context**: 4.12.0
+- **React Native Gesture Handler**: 2.20.2
 
 ### State Management
 - **Zustand**: 4.5.0
@@ -56,6 +57,7 @@ flavrmap/
 3. **tailwind.config.js**: TailwindCSS configuration
 4. **postcss.config.js**: PostCSS configuration
 5. **app.json**: Expo configuration
+6. **babel.config.js**: Babel configuration
 
 ## Development Workflow
 1. **Setup**
@@ -67,7 +69,7 @@ flavrmap/
 2. **Development**
    - Run on iOS: `expo start --ios`
    - Run on Android: `expo start --android`
-   - Run on Web: `expo start --web`
+   - Web support: Currently not available in Expo 52 (requires downgrade to Expo 48 for web support)
 
 3. **Testing**
    - Unit tests: `npm test`
@@ -76,16 +78,23 @@ flavrmap/
 4. **Building**
    - iOS: `expo build:ios`
    - Android: `expo build:android`
-   - Web: `expo build:web`
+   - Web: Not supported in current version
+
+## Known Limitations
+1. **Web Platform Support**
+   - Expo 52 does not yet have stable web support
+   - Web development requires downgrading to Expo 48
+   - Current focus is on mobile platforms (iOS/Android)
 
 ## Dependencies
 ### Production
-- exppo
+- expo
 - react-native
 - react-navigation
 - firebase
 - zustand
 - nativewind
+- react-native-gesture-handler
 
 ### Development
 - typescript

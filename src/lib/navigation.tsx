@@ -1,49 +1,32 @@
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { RootStackParamList, AuthStackParamList, MainTabParamList } from './navigation';
+import { View, Text } from 'react-native';
 
-import { OnboardingScreen } from '../screens/OnboardingScreen';
-import { SignInScreen } from '../screens/SignInScreen';
-import { SignUpScreen } from '../screens/SignUpScreen';
-import { HomeScreen } from '../screens/HomeScreen';
-import { RecipesScreen } from '../screens/RecipesScreen';
-import { GroceryCartScreen } from '../screens/GroceryCartScreen';
-import { StoreFinderScreen } from '../screens/StoreFinderScreen';
+// Simple placeholder screen
+const PlaceholderScreen = () => (
+  <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+    <Text>Coming Soon</Text>
+  </View>
+);
 
-const RootStack = createNativeStackNavigator<RootStackParamList>();
-const AuthStack = createNativeStackNavigator<AuthStackParamList>();
-const MainTab = createBottomTabNavigator<MainTabParamList>();
+// Create the stack navigator
+const Stack = createNativeStackNavigator();
 
-const AuthNavigator = () => {
-  return (
-    <AuthStack.Navigator screenOptions={{ headerShown: false }}>
-      <AuthStack.Screen name="SignIn" component={SignInScreen} />
-      <AuthStack.Screen name="SignUp" component={SignUpScreen} />
-    </AuthStack.Navigator>
-  );
-};
-
-const MainNavigator = () => {
-  return (
-    <MainTab.Navigator>
-      <MainTab.Screen name="Home" component={HomeScreen} />
-      <MainTab.Screen name="Recipes" component={RecipesScreen} />
-      <MainTab.Screen name="GroceryCart" component={GroceryCartScreen} />
-      <MainTab.Screen name="StoreFinder" component={StoreFinderScreen} />
-    </MainTab.Navigator>
-  );
-};
-
-export const Navigation = () => {
+// Navigation component
+const Navigation = () => {
   return (
     <NavigationContainer>
-      <RootStack.Navigator screenOptions={{ headerShown: false }}>
-        <RootStack.Screen name="Onboarding" component={OnboardingScreen} />
-        <RootStack.Screen name="Auth" component={AuthNavigator} />
-        <RootStack.Screen name="Main" component={MainNavigator} />
-      </RootStack.Navigator>
+      <Stack.Navigator>
+        <Stack.Screen 
+          name="Home" 
+          component={PlaceholderScreen}
+          options={{ headerShown: false }}
+        />
+      </Stack.Navigator>
     </NavigationContainer>
   );
-}; 
+};
+
+// Make sure to export the component
+export default Navigation;

@@ -1,78 +1,46 @@
-# FlavrMap Active Context
+# Active Context
 
 ## Current Focus
-- Initial project setup
-- Basic navigation structure
-- Core screen components
-- State management setup
+- Implementing the core navigation structure for FlavrMap
+- Building out the UI components starting with the Onboarding flow
 
 ## Recent Changes
-1. **Project Structure**
-   - Created src directory with subdirectories
-   - Set up TypeScript configuration
-   - Configured NativeWind and TailwindCSS
-
-2. **Navigation**
-   - Implemented root stack navigator
-   - Added auth stack navigator
-   - Created main tab navigator
-   - Set up screen components
-
-3. **State Management**
-   - Initialized Zustand
-   - Created auth store
-   - Set up basic state structure
-
-## Next Steps
-1. **Firebase Integration**
-   - Set up Firebase configuration
-   - Implement authentication
-   - Configure Firestore
-   - Set up storage
-
-2. **UI Implementation**
-   - Design and implement onboarding screens
-   - Create authentication forms
-   - Build meal planner interface
-   - Develop recipe browser
-   - Design grocery cart
-   - Implement store finder
-
-3. **Feature Development**
-   - Meal planning logic
-   - Recipe management
-   - Grocery list generation
-   - Store price comparison
-   - Budget tracking
+- Fixed navigation setup issues by implementing a proper RootNavigation component
+- Created a clean navigation hierarchy with:
+  - Root Stack (Onboarding → Auth → Main)
+  - Auth Stack (SignIn, SignUp)
+  - Main Tab Navigator (Home, Recipes, GroceryCart, StoreFinder)
+- Implemented Onboarding screen with:
+  - Welcome message and app description
+  - Sign In and Create Account buttons
+  - Modern UI with proper styling
+  - Navigation to Auth flow
 
 ## Active Decisions
-1. **Navigation Structure**
-   - Using stack navigator for auth flow
-   - Bottom tabs for main app sections
-   - Nested navigation for complex flows
+- Using React Navigation v6 for app navigation
+- Following a multi-stack navigation pattern for better separation of concerns
+- Using TypeScript for type safety and better development experience
+- Implementing a modern, clean UI design with consistent styling
 
-2. **State Management**
-   - Zustand for global state
-   - Local state for component-specific data
-   - Firebase for persistent storage
+## Next Steps
+1. Create proper screen components:
+   - Move screens to separate files in `src/screens/`
+   - Implement SignIn and SignUp screens with forms
+   - Design and implement the main tab screens
 
-3. **Styling Approach**
-   - NativeWind for TailwindCSS support
-   - Component-based design system
-   - Responsive layouts
+2. Add UI enhancements:
+   - Icons for bottom tab navigation
+   - Loading states and transitions
+   - Error handling for auth flow
+   - Consistent styling system
 
-## Current Considerations
-1. **Performance**
-   - Optimizing navigation transitions
-   - Managing state updates
-   - Handling large data sets
+3. Implement core functionality:
+   - Authentication logic
+   - Data management
+   - API integration
 
-2. **User Experience**
-   - Smooth onboarding process
-   - Intuitive navigation
-   - Responsive feedback
-
-3. **Technical Debt**
-   - Type definitions
-   - Error handling
-   - Testing coverage 
+4. Technical improvements:
+   - Extract common styles to a theme system
+   - Create reusable UI components
+   - Add proper error boundaries
+   - Implement loading states 
